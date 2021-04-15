@@ -50,9 +50,7 @@ public class Main {
                 System.out.println("Failed to make connection!");
             }
 
-            //Begin thread - Barbada, 2 minutinhos
             ResultSet resultSet = preparedStatement.executeQuery();
-            //End Thread - Feito carreta
 
         } catch (SQLException e) {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
