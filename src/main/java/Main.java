@@ -103,6 +103,7 @@ public class Main {
                 timeDelete += executionTime;
             }
 
+
         } catch (SQLException e) {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
         } catch (Exception e) {
