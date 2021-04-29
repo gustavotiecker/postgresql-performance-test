@@ -47,7 +47,7 @@ public class Main {
     private static void selectOrderItem() throws SQLException {
         //for
         count = 0;
-        sqlSelect = "SELECT product_id, seller_id, shipping_limit_date, price FROM order_items AS oi WHERE oi.price > " + Math.random() * 51 + ";";
+        sqlSelect = "SELECT * FROM order_items AS oi WHERE oi.price > " + Math.random() * 51 + ";";
         accessDatabase(sqlSelect);
         //endfor
 
@@ -86,13 +86,12 @@ public class Main {
                 System.out.println("Failed to make connection!");
             }
 
-            //Begin thread - Barbada, 2 minutinhos
             long startTime = System.nanoTime();
             ResultSet resultSet = preparedStatement.executeQuery();
             long endTime = System.nanoTime();
 
             long executionTime = endTime - startTime;
-            //End Thread - Feito carreta
+
             if(query.startsWith("SELECT")) {
                 timeSelect += executionTime;
             } else if(query.startsWith("INSERT")) {
@@ -114,7 +113,7 @@ public class Main {
     private static OrderItem createOrderItem() {
         OrderItem orderItem = new OrderItem();
         orderItem.setOrderId(UUID.randomUUID().toString());
-        orderItem.setOrderItemId(Integer.parseInt(String.valueOf(Math.random() * 4)));
+        orderItem.setOrderItemId((int) Math.round(Math.random() * 4));
         orderItem.setProductId(UUID.randomUUID().toString());
         orderItem.setSellerId(UUID.randomUUID().toString());
         orderItem.setShippingLimitDate("2017-02-13 13:57:51");
