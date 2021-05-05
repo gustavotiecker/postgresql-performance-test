@@ -1,78 +1,95 @@
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.UUID;
 
 public class Main {
 
     private static String sqlInsert, sqlSelect, sqlUpdate, sqlDelete;
-    private static long count = 0;
-    private static double timeSelect = 0, timeInsert = 0, timeUpdate = 0, timeDelete = 0;
+    private static Long count = 0l;
+    private static BigDecimal timeSelect, timeInsert, timeUpdate, timeDelete;
 
     public static void main(String[] args) throws SQLException {
+
+        timeSelect = instanceBigDecimal();
+        timeInsert = instanceBigDecimal();
+        timeUpdate = instanceBigDecimal();
+        timeDelete = instanceBigDecimal();
+
         selectOrderItem();
         insertOrderItem();
         updateOrderItem();
-        deleteOrderItem((int) Math.random() * 1000000);
+        //deleteOrderItem((int) Math.random() * 1000000);
 
         //obtendo medias
-        timeSelect = timeSelect / count;
-        timeInsert = timeInsert / count;
-        timeUpdate = timeUpdate / count;
-        timeDelete = timeDelete / count;
+        timeSelect = timeSelect.divide(new BigDecimal(count.toString()));
+        timeSelect = timeSelect.divide(new BigDecimal("1000000"));
 
-        System.out.println("=============== Averages ===============");
-        System.out.println("Select: " + timeSelect +
-                "Insert: " + timeInsert +
-                "Update: " + timeUpdate +
-                "Delete: " + timeDelete);
-        System.out.println("========================================");
-    }
+        timeInsert = timeInsert.divide(new BigDecimal(count.toString()));
+        timeInsert = timeInsert.divide(new BigDecimal("1000000"));
 
-    private static void insertOrderItem() {
-        //for
-        count = 0;
-        OrderItem orderItem = createOrderItem();
-        sqlInsert = "INSERT INTO order_items VALUES ('" + orderItem.getOrderId() +
-                "', " + orderItem.getOrderItemId() +
-                ", '" + orderItem.getProductId() +
-                "', '" + orderItem.getSellerId() +
-                "', '" + orderItem.getShippingLimitDate() +
-                "', " + orderItem.getPrice() +
-                ", " + orderItem.getFreightValue() + ");";
-                accessDatabase(sqlInsert);
-                count ++;
-        //endfor
+        timeUpdate = timeUpdate.divide(new BigDecimal(count.toString()));
+        timeUpdate = timeUpdate.divide(new BigDecimal("1000000"));
 
+        // timeDelete = timeDelete.divide(new BigDecimal(count.toString()));
+        // timeDelete = timeDelete.divide(new BigDecimal("1000000"));
+
+        System.out.println("=============== Execution time averages in milliseconds ===============");
+        System.out.println("\nSelect: " + timeSelect +
+                "\nInsert: " + timeInsert +
+                "\nUpdate: " + timeUpdate +
+                "\nDelete: " + timeDelete);
+        System.out.println("=======================================================================");
     }
 
     private static void selectOrderItem() throws SQLException {
-        //for
-        count = 0;
-        sqlSelect = "SELECT * FROM order_items AS oi WHERE oi.price > " + Math.random() * 51 + ";";
-        accessDatabase(sqlSelect);
-        //endfor
+        count = 0l;
+        for (int i = 0; i < 10; i++) {
+            sqlSelect = "SELECT * FROM order_items AS oi WHERE oi.price > " + Math.random() * 51 + ";";
+            accessDatabase(sqlSelect);
+            count++;
+        }
+        System.out.println("select");
+    }
 
-
+    private static void insertOrderItem() {
+        count = 0l;
+        for (int i = 0; i < 1; i++) {
+            OrderItem orderItem = createOrderItem();
+            sqlInsert = "INSERT INTO order_items VALUES ('" + orderItem.getOrderId() +
+                    "', " + orderItem.getOrderItemId() +
+                    ", '" + orderItem.getProductId() +
+                    "', '" + orderItem.getSellerId() +
+                    "', '" + orderItem.getShippingLimitDate() +
+                    "', " + orderItem.getPrice() +
+                    ", " + orderItem.getFreightValue() + ");";
+            accessDatabase(sqlInsert);
+            count ++;
+        }
+        System.out.println("insert");
     }
 
     private static void updateOrderItem() {
-        //for
-        count = 0;
-        sqlUpdate = "UPDATE order_items SET freight_value = freight_value + (freight_value * 0.2) WHERE price > " + Math.random() * 101 + ";";
-        accessDatabase(sqlUpdate);
-        //endfor
-
-
+        count = 0l;
+        for (int i = 0; i < 10; i++) {
+            sqlUpdate = "UPDATE order_items SET freight_value = freight_value + (freight_value * 0.2) WHERE price > " + Math.random() * 101 + ";";
+            accessDatabase(sqlUpdate);
+            count ++;
+        }
+        System.out.println("update");
     }
 
     // TO DO
     private static void deleteOrderItem(int num) {
-        //for
-        count = 0;
-        sqlDelete = "DELETE FROM order_items WHERE price > 300 AND freight_value > 5  AND freight_value < 5 + 5;";
-        accessDatabase(sqlDelete);
-        //endfor
+        count = 0l;
+        for (int i = 0; i < 10; i++) {
+            sqlDelete = "DELETE FROM order_items WHERE price > 300 AND freight_value > 5  AND freight_value < 5 + 5;";
+            accessDatabase(sqlDelete);
+            count ++;
+        }
+    }
 
-
+    private static BigDecimal instanceBigDecimal() {
+        return new BigDecimal("0");
     }
 
     private static void accessDatabase(String query) {
@@ -80,26 +97,24 @@ public class Main {
                 "jdbc:postgresql://127.0.0.1:5432/test", "postgres", "root");
              PreparedStatement preparedStatement = conn.prepareStatement(query)) {
 
-            if (conn != null) {
-                System.out.println("Connected to the database!");
-            } else {
+            if (conn == null) {
                 System.out.println("Failed to make connection!");
             }
 
-            long startTime = System.nanoTime();
-            ResultSet resultSet = preparedStatement.executeQuery();
-            long endTime = System.nanoTime();
+            Long startTime = System.nanoTime();
+            preparedStatement.execute();
+            Long endTime = System.nanoTime();
 
-            long executionTime = endTime - startTime;
+            Long executionTime = endTime - startTime;
 
             if(query.startsWith("SELECT")) {
-                timeSelect += executionTime;
+                timeSelect = timeSelect.add(new BigDecimal(executionTime.toString()));
             } else if(query.startsWith("INSERT")) {
-                timeInsert += executionTime;
+                timeInsert = timeInsert.add(new BigDecimal(executionTime.toString()));
             } else if(query.startsWith("UPDATE")) {
-                timeUpdate += executionTime;
+                timeUpdate = timeUpdate.add(new BigDecimal(executionTime.toString()));
             } else if(query.startsWith("DELETE")) {
-                timeDelete += executionTime;
+                //timeDelete += executionTime;
             }
 
 
