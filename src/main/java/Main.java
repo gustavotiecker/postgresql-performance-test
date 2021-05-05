@@ -18,7 +18,7 @@ public class Main {
         selectOrderItem();
         insertOrderItem();
         updateOrderItem();
-        //deleteOrderItem((int) Math.random() * 1000000);
+        deleteOrderItem((int) Math.random() * 1000000);
 
         //obtendo medias
         timeSelect = timeSelect.divide(new BigDecimal(count.toString()));
@@ -30,8 +30,8 @@ public class Main {
         timeUpdate = timeUpdate.divide(new BigDecimal(count.toString()));
         timeUpdate = timeUpdate.divide(new BigDecimal("1000000"));
 
-        // timeDelete = timeDelete.divide(new BigDecimal(count.toString()));
-        // timeDelete = timeDelete.divide(new BigDecimal("1000000"));
+        timeDelete = timeDelete.divide(new BigDecimal(count.toString()));
+        timeDelete = timeDelete.divide(new BigDecimal("1000000"));
 
         System.out.println("=============== Execution time averages in milliseconds ===============");
         System.out.println("\nSelect: " + timeSelect +
@@ -55,7 +55,8 @@ public class Main {
         count = 0l;
         for (int i = 0; i < 1; i++) {
             OrderItem orderItem = createOrderItem();
-            sqlInsert = "INSERT INTO order_items VALUES ('" + orderItem.getOrderId() +
+            sqlInsert = "INSERT INTO order_items VALUES (" + orderItem.getControlId() +
+                    ", '" + orderItem.getOrderId() +
                     "', " + orderItem.getOrderItemId() +
                     ", '" + orderItem.getProductId() +
                     "', '" + orderItem.getSellerId() +
@@ -78,11 +79,10 @@ public class Main {
         System.out.println("update");
     }
 
-    // TO DO
     private static void deleteOrderItem(int num) {
         count = 0l;
         for (int i = 0; i < 10; i++) {
-            sqlDelete = "DELETE FROM order_items WHERE price > 300 AND freight_value > 5  AND freight_value < 5 + 5;";
+            sqlDelete = "DELETE FROM order_items WHERE control_id = " + num + ";";
             accessDatabase(sqlDelete);
             count ++;
         }
@@ -114,7 +114,7 @@ public class Main {
             } else if(query.startsWith("UPDATE")) {
                 timeUpdate = timeUpdate.add(new BigDecimal(executionTime.toString()));
             } else if(query.startsWith("DELETE")) {
-                //timeDelete += executionTime;
+                timeDelete = timeDelete.add(new BigDecimal(executionTime.toString()));
             }
 
 
@@ -127,6 +127,7 @@ public class Main {
 
     private static OrderItem createOrderItem() {
         OrderItem orderItem = new OrderItem();
+        orderItem.setControlId((int) Math.round(Math.random() * 4));
         orderItem.setOrderId(UUID.randomUUID().toString());
         orderItem.setOrderItemId((int) Math.round(Math.random() * 4));
         orderItem.setProductId(UUID.randomUUID().toString());

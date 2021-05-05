@@ -1,4 +1,5 @@
 public class OrderItem {
+    private int controlId;
     private String orderId;
     private int orderItemId;
     private String productId;
@@ -6,6 +7,14 @@ public class OrderItem {
     private String shippingLimitDate;
     private double price;
     private double freightValue;
+
+    public int getControlId() {
+        return controlId;
+    }
+
+    public void setControlId(int controlId) {
+        this.controlId = controlId;
+    }
 
     public String getOrderId() {
         return orderId;
