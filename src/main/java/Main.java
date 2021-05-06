@@ -18,7 +18,7 @@ public class Main {
         selectOrderItem();
         insertOrderItem();
         updateOrderItem();
-        deleteOrderItem((int) Math.random() * 1000000);
+        deleteOrderItem((int) Math.round(Math.random() * 100000));
 
         //obtendo medias
         timeSelect = timeSelect.divide(new BigDecimal(count.toString()));
@@ -72,7 +72,7 @@ public class Main {
     private static void updateOrderItem() {
         count = 0l;
         for (int i = 0; i < 10; i++) {
-            sqlUpdate = "UPDATE order_items SET freight_value = freight_value + (freight_value * 0.2) WHERE price > " + Math.random() * 101 + ";";
+            sqlUpdate = "UPDATE order_items SET freight_value = " + Math.random() * 101 + "WHERE control_id = " + (int) Math.round(Math.random() * 101) + ";";
             accessDatabase(sqlUpdate);
             count ++;
         }
