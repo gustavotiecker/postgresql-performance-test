@@ -4,8 +4,9 @@ import java.util.UUID;
 
 public class Main {
 
+    private static final Integer ITERATIONS = 1;
+
     private static String sqlInsert, sqlSelect, sqlUpdate, sqlDelete;
-    private static Long count = 0l;
     private static BigDecimal timeSelect, timeInsert, timeUpdate, timeDelete;
 
     public static void main(String[] args) throws SQLException {
@@ -21,16 +22,16 @@ public class Main {
         deleteOrderItem((int) Math.round(Math.random() * 100000));
 
         //obtendo medias
-        timeSelect = timeSelect.divide(new BigDecimal(count.toString()));
+        timeSelect = timeSelect.divide(new BigDecimal(ITERATIONS.toString()));
         timeSelect = timeSelect.divide(new BigDecimal("1000000"));
 
-        timeInsert = timeInsert.divide(new BigDecimal(count.toString()));
+        timeInsert = timeInsert.divide(new BigDecimal(ITERATIONS.toString()));
         timeInsert = timeInsert.divide(new BigDecimal("1000000"));
 
-        timeUpdate = timeUpdate.divide(new BigDecimal(count.toString()));
+        timeUpdate = timeUpdate.divide(new BigDecimal(ITERATIONS.toString()));
         timeUpdate = timeUpdate.divide(new BigDecimal("1000000"));
 
-        timeDelete = timeDelete.divide(new BigDecimal(count.toString()));
+        timeDelete = timeDelete.divide(new BigDecimal(ITERATIONS.toString()));
         timeDelete = timeDelete.divide(new BigDecimal("1000000"));
 
         System.out.println("=============== Execution time averages in milliseconds ===============");
@@ -42,17 +43,14 @@ public class Main {
     }
 
     private static void selectOrderItem() throws SQLException {
-        count = 0l;
         for (int i = 0; i < 10; i++) {
             sqlSelect = "SELECT * FROM order_items AS oi WHERE oi.price > " + Math.random() * 51 + ";";
             accessDatabase(sqlSelect);
-            count++;
         }
         System.out.println("select");
     }
 
     private static void insertOrderItem() {
-        count = 0l;
         for (int i = 0; i < 1; i++) {
             OrderItem orderItem = createOrderItem();
             sqlInsert = "INSERT INTO order_items VALUES (" + orderItem.getControlId() +
@@ -64,28 +62,24 @@ public class Main {
                     "', " + orderItem.getPrice() +
                     ", " + orderItem.getFreightValue() + ");";
             accessDatabase(sqlInsert);
-            count ++;
         }
         System.out.println("insert");
     }
 
     private static void updateOrderItem() {
-        count = 0l;
         for (int i = 0; i < 10; i++) {
             sqlUpdate = "UPDATE order_items SET freight_value = " + Math.random() * 101 + "WHERE control_id = " + (int) Math.round(Math.random() * 101) + ";";
             accessDatabase(sqlUpdate);
-            count ++;
         }
         System.out.println("update");
     }
 
     private static void deleteOrderItem(int num) {
-        count = 0l;
         for (int i = 0; i < 10; i++) {
             sqlDelete = "DELETE FROM order_items WHERE control_id = " + num + ";";
             accessDatabase(sqlDelete);
-            count ++;
         }
+        System.out.println("delete");
     }
 
     private static BigDecimal instanceBigDecimal() {
